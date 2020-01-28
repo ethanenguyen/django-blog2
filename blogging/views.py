@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
+from rest_framework import viewsets
+from blogging.serializers import CategorySerializer, PostSerializer
 
-from blogging.models import Post
+from blogging.models import Post, Category
 
 
 def detail_view(request, post_id):
@@ -20,3 +22,18 @@ def list_view(request):
     posts = published.order_by('-published_date')
     context = {'posts': posts}
     return render(request, 'blogging/list.html', context)
+
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Post.objects.all().order_by('created_date')
+    serializer_class = PostSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
